@@ -24,7 +24,7 @@ def get_current_path():
 
     return ret
 
-class MultiLanguage(object):
+class MultiLanguage:
     CONFIG_FILE_NAME = 'strings.json'
     DEFAULT_LANGUAGE = 'en'
     instance = None
@@ -35,8 +35,8 @@ class MultiLanguage(object):
         ret = []
         if info is not None:
             for key in info.keys():
-                if isinstance(key, unicode):
-                    ret.append(key.encode('utf-8'))
+                if isinstance(key, str):
+                    ret.append(key)
 
         return ret
 
@@ -56,12 +56,12 @@ class MultiLanguage(object):
             if isinstance(fmt_value, tuple):
                 dst_values = []
                 for value in fmt_value:
-                    if isinstance(value, unicode):
+                    if isinstance(value, str):
                         dst_values.append(value.encode(cls.get_instance().get_encoding()))
                     else:
                         dst_values.append(value)
                 ret = fmt % tuple(dst_values)
-            elif isinstance(fmt_value, unicode):
+            elif isinstance(fmt_value, str):
                 ret = fmt % fmt_value.encode(cls.get_instance().get_encoding())
             else:
                 ret = fmt % fmt_value
@@ -94,18 +94,12 @@ class MultiLanguage(object):
         # get the strings info
         if os.path.isfile(cfg_file_path):
             f = open(cfg_file_path)
-            self.cfg_info = json.load(f, encoding='utf-8')
+            self.cfg_info = json.load(f)
             f.close()
 
-            if self.cfg_info.has_key(cur_lang_key):
-                self.cur_lang_strings = self.cfg_info[cur_lang_key]
-            else:
-                self.cur_lang_strings = None
+            self.cur_lang_strings = self.cfg_info.get(cur_lang_key)
 
-            if self.cfg_info.has_key(MultiLanguage.DEFAULT_LANGUAGE):
-                self.default_lang_strings = self.cfg_info[MultiLanguage.DEFAULT_LANGUAGE]
-            else:
-                self.default_lang_strings = None
+            self.default_lang_strings = self.cfg_info.get(MultiLanguage.DEFAULT_LANGUAGE)
         else:
             self.cfg_info = None
             self.cur_lang_strings = None
@@ -132,13 +126,13 @@ class MultiLanguage(object):
 
     def has_key(self, key, strings_info):
         ret = False
-        if strings_info is not None and strings_info.has_key(key):
+        if strings_info is not None and strings_info.get(key):
             ret = True
 
         return ret
 
     def set_current_language(self, lang):
-        if (self.cfg_info is not None) and (self.cfg_info.has_key(lang)):
+        if (self.cfg_info is not None) and (self.cfg_info.get(lang)):
             self.cur_lang_strings = self.cfg_info[lang]
         else:
             cocos.Logging.warning(MultiLanguage.get_string('COCOS_WARNING_LANG_NOT_SUPPORT_FMT', lang))
@@ -152,9 +146,5 @@ class MultiLanguage(object):
         elif self.has_key(key, self.default_lang_strings):
             ret = self.default_lang_strings[key]
         else:
-            ret= key
-
-        if isinstance(ret, unicode):
-            ret = ret.encode(self.encoding)
-
+            ret = key
         return ret
