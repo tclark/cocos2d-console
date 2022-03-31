@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #coding=utf-8
 #
 # ./download-bin.py
@@ -48,13 +48,13 @@ from sys import stdout
 from distutils.errors import DistutilsError
 from distutils.dir_util import copy_tree, remove_tree
 
-class UnrecognizedFormat:
+class UnrecognizedFormat(Exception):
     def __init__(self, prompt):
         self._prompt = prompt
     def __str__(self):
         return self._prompt
 
-class CocosZipInstaller(object):
+class CocosZipInstaller:
     def __init__(self, workpath, config_path, version_path, remote_version_key = None):
         self._workpath = workpath
         self._config_path = config_path
@@ -80,24 +80,23 @@ class CocosZipInstaller(object):
             print("==> version file doesn't exist")
 
     def get_input_value(self, prompt):
-        ret = raw_input(prompt)
+        ret = input(prompt)
         ret.rstrip(" \t")
         return ret
 
     def download_file(self):
         print("==> Ready to download '%s' from '%s'" % (self._filename, self._url))
-        import urllib2
+        import urllib.request, urllib.error
         try:
-            u = urllib2.urlopen(self._url)
-        except urllib2.HTTPError as e:
+            u = urllib.request.urlopen(self._url)
+        except urllib.error.HTTPError as e:
             if e.code == 404:
                 print("==> Error: Could not find the file from url: '%s'" % (self._url))
             print("==> Http request failed, error code: " + str(e.code) + ", reason: " + e.read())
             sys.exit(1)
 
         f = open(self._filename, 'wb')
-        meta = u.info()
-        content_len = meta.getheaders("Content-Length")
+        content_len = u.headers.get("Content-Length")
         file_size = 0
         if content_len and len(content_len) > 0:
             file_size = int(content_len[0])
@@ -260,20 +259,9 @@ class CocosZipInstaller(object):
             print("==> Download (%s) finish!" % self._filename)
 
 
-def _check_python_version():
-    major_ver = sys.version_info[0]
-    if major_ver > 2:
-        print ("The python version is %d.%d. But python 2.x is required. (Version 2.7 is well tested)\n"
-               "Download it here: https://www.python.org/" % (major_ver, sys.version_info[1]))
-        return False
-
-    return True
 
 def main():
     workpath = os.path.dirname(os.path.realpath(__file__))
-
-    if not _check_python_version():
-        sys.exit(1)
 
     parser = OptionParser()
     parser.add_option('-r', '--remove-download',
