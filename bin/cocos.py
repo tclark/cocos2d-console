@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # ----------------------------------------------------------------------------
 # cocos-console: command line tool manager for cocos2d-x
 #
@@ -37,8 +37,8 @@ COCOS2D_CONSOLE_VERSION = '2.3'
 
 class Cocos2dIniParser:
     def __init__(self):
-        import ConfigParser
-        self._cp = ConfigParser.ConfigParser(allow_no_value=True)
+        import configparser
+        self._cp = configparser.ConfigParser(allow_no_value=True)
         self._cp.optionxform = str
 
         # read global config file
@@ -343,7 +343,7 @@ class DataStatistic(object):
 
         if skip_agree_value is None:
             # show the agreement
-            input_value = raw_input(MultiLanguage.get_string('COCOS_AGREEMENT'))
+            input_value = input(MultiLanguage.get_string('COCOS_AGREEMENT'))
             agreed = (input_value.lower() != 'n' and input_value.lower() != 'no')
         else:
             # --agreement is used to skip the input
@@ -460,7 +460,7 @@ class CCPlugin(object):
         if os.path.isdir(cocos2dx_path):
             return cocos2dx_path
 
-        if cls.get_cocos2d_mode() is not "distro":
+        if cls.get_cocos2d_mode() != "distro":
             # In 'distro' mode this is not a warning since
             # the source code is not expected to be installed
             Logging.warning(MultiLanguage.get_string('COCOS_WARNING_ENGINE_NOT_FOUND'))
@@ -970,21 +970,6 @@ def run_plugin(command, argv, plugins):
         plugin.run(argv, dependencies_objects)
         return plugin
 
-
-def _check_python_version():
-    major_ver = sys.version_info[0]
-    minor_ver = sys.version_info[1]
-    ret = True
-    if major_ver != 2:
-        ret = False
-    elif minor_ver < 7:
-        ret = False
-
-    if not ret:
-        print(MultiLanguage.get_string('COCOS_PYTHON_VERSION_TIP_FMT') % (major_ver, minor_ver))
-
-    return ret
-
 # gettext
 language = None
 encoding = None
@@ -1052,10 +1037,6 @@ if __name__ == "__main__":
 
     DataStatistic.show_stat_agreement(skip_agree_value)
     DataStatistic.stat_event('cocos', 'start', 'invoked')
-
-    if not _check_python_version():
-        DataStatistic.terminate_stat()
-        sys.exit(CCPluginError.ERROR_TOOLS_NOT_FOUND)
 
     parser = Cocos2dIniParser()
     plugins_path = parser.get_plugins_path()
