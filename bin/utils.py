@@ -16,13 +16,13 @@ VS_VERSION_MAP = {
 
 def get_msbuild_path(vs_version):
     if cocos.os_is_win32():
-        import _winreg
+        import winreg
     else:
         return None
 
     if isinstance(vs_version, int):
         # The value of vs_version is int. such as : 2013, 2015
-        if vs_version in VS_VERSION_MAP.keys():
+        if vs_version in list(VS_VERSION_MAP.keys()):
             vs_ver = VS_VERSION_MAP[vs_version]
         else:
             # not supported VS version
@@ -36,21 +36,21 @@ def get_msbuild_path(vs_version):
     # If the system is 64bit, find VS in both 32bit & 64bit registry
     # If the system is 32bit, only find VS in 32bit registry
     if cocos.os_is_32bit_windows():
-        reg_flag_list = [ _winreg.KEY_WOW64_32KEY ]
+        reg_flag_list = [ winreg.KEY_WOW64_32KEY ]
     else:
-        reg_flag_list = [ _winreg.KEY_WOW64_64KEY, _winreg.KEY_WOW64_32KEY ]
+        reg_flag_list = [ winreg.KEY_WOW64_64KEY, winreg.KEY_WOW64_32KEY ]
 
     # Find VS path
     msbuild_path = None
     for reg_flag in reg_flag_list:
         try:
-            vs = _winreg.OpenKey(
-                _winreg.HKEY_LOCAL_MACHINE,
+            vs = winreg.OpenKey(
+                winreg.HKEY_LOCAL_MACHINE,
                 r"SOFTWARE\Microsoft\MSBuild\ToolsVersions\%s" % vs_ver,
                 0,
-                _winreg.KEY_READ | reg_flag
+                winreg.KEY_READ | reg_flag
             )
-            msbuild_path, type = _winreg.QueryValueEx(vs, 'MSBuildToolsPath')
+            msbuild_path, type = winreg.QueryValueEx(vs, 'MSBuildToolsPath')
         except:
             continue
 
@@ -65,13 +65,13 @@ def get_msbuild_path(vs_version):
 
 def get_devenv_path(vs_version):
     if cocos.os_is_win32():
-        import _winreg
+        import winreg
     else:
         return None
 
     if isinstance(vs_version, int):
         # The value of vs_version is int. such as : 2013, 2015
-        if vs_version in VS_VERSION_MAP.keys():
+        if vs_version in list(VS_VERSION_MAP.keys()):
             vs_ver = VS_VERSION_MAP[vs_version]
         else:
             # not supported VS version
@@ -85,26 +85,26 @@ def get_devenv_path(vs_version):
     # If the system is 64bit, find VS in both 32bit & 64bit registry
     # If the system is 32bit, only find VS in 32bit registry
     if cocos.os_is_32bit_windows():
-        reg_flag_list = [ _winreg.KEY_WOW64_32KEY ]
+        reg_flag_list = [ winreg.KEY_WOW64_32KEY ]
     else:
-        reg_flag_list = [ _winreg.KEY_WOW64_64KEY, _winreg.KEY_WOW64_32KEY ]
+        reg_flag_list = [ winreg.KEY_WOW64_64KEY, winreg.KEY_WOW64_32KEY ]
 
     devenv_path = None
     for reg_flag in reg_flag_list:
         try:
-            vs = _winreg.OpenKey(
-                _winreg.HKEY_LOCAL_MACHINE,
+            vs = winreg.OpenKey(
+                winreg.HKEY_LOCAL_MACHINE,
                 r"SOFTWARE\Microsoft\VisualStudio",
                 0,
-                _winreg.KEY_READ | reg_flag
+                winreg.KEY_READ | reg_flag
             )
         except:
             continue
 
         # find specified VS
         try:
-            key = _winreg.OpenKey(vs, r"SxS\VS7")
-            devenv_path, type = _winreg.QueryValueEx(key, vs_ver)
+            key = winreg.OpenKey(vs, r"SxS\VS7")
+            devenv_path, type = winreg.QueryValueEx(key, vs_ver)
         except:
             pass
 
@@ -121,25 +121,25 @@ def get_vs_versions():
     # Get the VS versions
     ret = []
     if cocos.os_is_win32():
-        import _winreg
+        import winreg
     else:
         return ret
 
     # If the system is 64bit, find VS in both 32bit & 64bit registry
     # If the system is 32bit, only find VS in 32bit registry
     if cocos.os_is_32bit_windows():
-        reg_flag_list = [ _winreg.KEY_WOW64_32KEY ]
+        reg_flag_list = [ winreg.KEY_WOW64_32KEY ]
     else:
-        reg_flag_list = [ _winreg.KEY_WOW64_64KEY, _winreg.KEY_WOW64_32KEY ]
+        reg_flag_list = [ winreg.KEY_WOW64_64KEY, winreg.KEY_WOW64_32KEY ]
 
     version_pattern = re.compile(r'(\d+)\.(\d+)')
     for reg_flag in reg_flag_list:
         try:
-            vs = _winreg.OpenKey(
-                _winreg.HKEY_LOCAL_MACHINE,
+            vs = winreg.OpenKey(
+                winreg.HKEY_LOCAL_MACHINE,
                 r"SOFTWARE\Microsoft\VisualStudio",
                 0,
-                _winreg.KEY_READ | reg_flag
+                winreg.KEY_READ | reg_flag
             )
         except:
             continue
@@ -148,7 +148,7 @@ def get_vs_versions():
         while True:
             # enum the keys in vs reg
             try:
-                version = _winreg.EnumKey(vs, i)
+                version = winreg.EnumKey(vs, i)
             except:
                 break
             i += 1
@@ -166,7 +166,7 @@ def get_vs_versions():
 def get_newest_msbuild(min_ver=None):
     versions = get_vs_versions()
     cmp = cocos.version_compare
-    if isinstance(min_ver, int) and min_ver in VS_VERSION_MAP.keys():
+    if isinstance(min_ver, int) and min_ver in list(VS_VERSION_MAP.keys()):
         # value of min_ver is int. such as : 2013, 2015
         min_ver = VS_VERSION_MAP[min_ver]
 
@@ -187,7 +187,7 @@ def get_newest_msbuild(min_ver=None):
 def get_newest_devenv(min_ver=None):
     versions = get_vs_versions()
     cmp = cocos.version_compare
-    if isinstance(min_ver, int) and min_ver in VS_VERSION_MAP.keys():
+    if isinstance(min_ver, int) and min_ver in list(VS_VERSION_MAP.keys()):
         # value of min_ver is int. such as : 2013, 2015
         min_ver = VS_VERSION_MAP[min_ver]
 

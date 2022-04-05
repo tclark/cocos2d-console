@@ -58,7 +58,7 @@ class Cocos2dIniParser:
                     category = plugin_class.plugin_category()
                     name = plugin_class.plugin_name()
                     if name is None:
-                        print(MultiLanguage.get_string('COCOS_PARSE_PLUGIN_WARNING_FMT', classname))
+                        print((MultiLanguage.get_string('COCOS_PARSE_PLUGIN_WARNING_FMT', classname)))
                     if len(category) == 0:
                         key = name
                     else:
@@ -129,7 +129,7 @@ class Logging:
     @staticmethod
     def _print(s, color=None):
         if color and sys.stdout.isatty() and sys.platform != 'win32':
-            print(color + s + Logging.RESET)
+            print((color + s + Logging.RESET))
         else:
             print(s)
 
@@ -343,7 +343,7 @@ class DataStatistic(object):
 
         if skip_agree_value is None:
             # show the agreement
-            input_value = input(MultiLanguage.get_string('COCOS_AGREEMENT'))
+            input_value = eval(input(MultiLanguage.get_string('COCOS_AGREEMENT')))
             agreed = (input_value.lower() != 'n' and input_value.lower() != 'no')
         else:
             # --agreement is used to skip the input
@@ -469,7 +469,7 @@ class CCPlugin(object):
     @classmethod
     def get_console_path(cls):
         """returns the path where cocos console is installed"""
-        run_path = unicode(get_current_path(), "utf-8")
+        run_path = str(get_current_path(), "utf-8")
         return run_path
 
     @classmethod
@@ -521,7 +521,7 @@ class CCPlugin(object):
         # remove duplicates
         from collections import OrderedDict
         ordered = OrderedDict.fromkeys(paths)
-        paths = ordered.keys()
+        paths = list(ordered.keys())
         return paths
 
     @classmethod
@@ -635,8 +635,8 @@ class CCPlugin(object):
 
         if args.listplatforms and self._project is not None:
             platforms = cocos_project.Platforms(self._project, args.platform, args.proj_dir)
-            p = platforms.get_available_platforms().keys()
-            print('{"platforms":' + json.dumps(p) + '}')
+            p = list(platforms.get_available_platforms().keys())
+            print(('{"platforms":' + json.dumps(p) + '}'))
             sys.exit(0)
 
         self.init(args)
@@ -922,30 +922,30 @@ def pushd(newDir):
 
 
 def help():
-    print(MultiLanguage.get_string('COCOS_HELP_BRIEF_FMT',
-          (sys.argv[0], COCOS2D_CONSOLE_VERSION)))
-    print(MultiLanguage.get_string('COCOS_HELP_AVAILABLE_CMD'))
+    print((MultiLanguage.get_string('COCOS_HELP_BRIEF_FMT',
+          (sys.argv[0], COCOS2D_CONSOLE_VERSION))))
+    print((MultiLanguage.get_string('COCOS_HELP_AVAILABLE_CMD')))
     parse = Cocos2dIniParser()
     classes = parse.parse_plugins()
     max_name = max(len(classes[key].plugin_name(
-    ) + classes[key].plugin_category()) for key in classes.keys())
+    ) + classes[key].plugin_category()) for key in list(classes.keys()))
     max_name += 4
-    for key in classes.keys():
+    for key in list(classes.keys()):
         plugin_class = classes[key]
         category = plugin_class.plugin_category()
         category = (category + ' ') if len(category) > 0 else ''
         name = plugin_class.plugin_name()
-        print("\t%s%s%s%s" % (category, name,
+        print(("\t%s%s%s%s" % (category, name,
                               ' ' * (max_name - len(name + category)),
-                              plugin_class.brief_description()))
+                              plugin_class.brief_description())))
 
-    print(MultiLanguage.get_string('COCOS_HELP_AVAILABLE_ARGS_FMT',
-                                   MultiLanguage.get_available_langs()))
-    print(MultiLanguage.get_string('COCOS_HELP_EXAMPLE'))
+    print((MultiLanguage.get_string('COCOS_HELP_AVAILABLE_ARGS_FMT',
+                                   MultiLanguage.get_available_langs())))
+    print((MultiLanguage.get_string('COCOS_HELP_EXAMPLE')))
 
 def show_version():
     print(COCOS_ENGINE_VERSION)
-    print("Cocos Console %s" % COCOS2D_CONSOLE_VERSION)
+    print(("Cocos Console %s" % COCOS2D_CONSOLE_VERSION))
 
 def run_plugin(command, argv, plugins):
     run_directly = False

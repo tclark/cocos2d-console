@@ -61,7 +61,7 @@ class Project(object):
             raise cocos.CCPluginError(MultiLanguage.get_string('PROJECT_CFG_PARSE_FAILED_FMT',
                                       Project.CONFIG), cocos.CCPluginError.ERROR_PARSE_FILE)
 
-        if not project_info.has_key(Project.KEY_PROJ_TYPE):
+        if Project.KEY_PROJ_TYPE not in project_info:
             raise cocos.CCPluginError(MultiLanguage.get_string('PROJECT_CFG_GET_VALUE_FAILED_FMT',
                                       (Project.KEY_PROJ_TYPE, Project.CONFIG)),
                                       cocos.CCPluginError.ERROR_WRONG_CONFIG)
@@ -81,12 +81,12 @@ class Project(object):
 
         # if is script project, record whether it has native or not
         self._has_native = False
-        if (self._is_script_project() and project_info.has_key(Project.KEY_HAS_NATIVE)):
+        if (self._is_script_project() and Project.KEY_HAS_NATIVE in project_info):
             self._has_native = project_info[Project.KEY_HAS_NATIVE]
 
         # if has custom step script, record it
         self._custom_step = None
-        if (project_info.has_key(Project.KEY_CUSTOM_STEP_SCRIPT)):
+        if (Project.KEY_CUSTOM_STEP_SCRIPT in project_info):
             script_path = project_info[Project.KEY_CUSTOM_STEP_SCRIPT]
             if not os.path.isabs(script_path):
                 script_path = os.path.join(self._project_dir, script_path)
@@ -138,7 +138,7 @@ class Project(object):
         f.close()
 
         ret = None
-        if project_info.has_key(key):
+        if key in project_info:
             ret = project_info[key]
 
         return ret
@@ -216,7 +216,7 @@ class Platforms(object):
 
     @staticmethod
     def list():
-        return Platforms.CFG_CLASS_MAP.keys()
+        return list(Platforms.CFG_CLASS_MAP.keys())
 
     def __init__(self, project, current, proj_dir = None):
         self._project = project
@@ -227,11 +227,11 @@ class Platforms(object):
         self._current = None
         if current is not None:
             current_lower = current.lower()
-            if current_lower in self._available_platforms.keys():
+            if current_lower in list(self._available_platforms.keys()):
                 self._current = current_lower
             else:
                 raise cocos.CCPluginError(MultiLanguage.get_string('PROJECT_INVALID_PLATFORM_FMT',
-                                          (self._available_platforms.keys(), current)),
+                                          (list(self._available_platforms.keys()), current)),
                                           cocos.CCPluginError.ERROR_WRONG_ARGS)
 
     def _filter_platforms(self, platforms):
@@ -288,7 +288,7 @@ class Platforms(object):
                 continue
 
             cfg_key = "%s_cfg" % p
-            if proj_info.has_key(cfg_key):
+            if cfg_key in proj_info:
                 cfg_obj = cfg_class(root_path, self._project._is_script_project(), proj_info[cfg_key])
             else:
                 cfg_obj = cfg_class(root_path, self._project._is_script_project())
@@ -355,11 +355,11 @@ class Platforms(object):
 
     def select_one(self):
         if self._has_one():
-            self._current = self._available_platforms.keys()[0]
+            self._current = list(self._available_platforms.keys())[0]
             return
 
         raise cocos.CCPluginError(MultiLanguage.get_string('PROJECT_SPECIFY_PLATFORM_FMT',
-                                  str(self._available_platforms.keys())),
+                                  str(list(self._available_platforms.keys()))),
                                   cocos.CCPluginError.ERROR_WRONG_CONFIG)
 
 class PlatformConfig(object):
@@ -376,7 +376,7 @@ class PlatformConfig(object):
         pass
 
     def _parse_info(self, cfg_info):
-        if cfg_info.has_key(PlatformConfig.KEY_PROJ_PATH):
+        if PlatformConfig.KEY_PROJ_PATH in cfg_info:
             self.proj_path = os.path.join(self._proj_root_path, cfg_info[PlatformConfig.KEY_PROJ_PATH])
         else:
             self.proj_path = None
@@ -418,12 +418,12 @@ class iOSConfig(PlatformConfig):
 
     def _parse_info(self, cfg_info):
         super(iOSConfig, self)._parse_info(cfg_info)
-        if cfg_info.has_key(iOSConfig.KEY_PROJ_FILE):
+        if iOSConfig.KEY_PROJ_FILE in cfg_info:
             self.proj_file = cfg_info[iOSConfig.KEY_PROJ_FILE]
         else:
             self.proj_file = None
 
-        if cfg_info.has_key(iOSConfig.KEY_TARGET_NAME):
+        if iOSConfig.KEY_TARGET_NAME in cfg_info:
             self.target_name = cfg_info[iOSConfig.KEY_TARGET_NAME]
         else:
             self.target_name = None
@@ -446,12 +446,12 @@ class MacConfig(PlatformConfig):
 
     def _parse_info(self, cfg_info):
         super(MacConfig, self)._parse_info(cfg_info)
-        if cfg_info.has_key(iOSConfig.KEY_PROJ_FILE):
+        if iOSConfig.KEY_PROJ_FILE in cfg_info:
             self.proj_file = cfg_info[iOSConfig.KEY_PROJ_FILE]
         else:
             self.proj_file = None
 
-        if cfg_info.has_key(iOSConfig.KEY_TARGET_NAME):
+        if iOSConfig.KEY_TARGET_NAME in cfg_info:
             self.target_name = cfg_info[iOSConfig.KEY_TARGET_NAME]
         else:
             self.target_name = None
@@ -480,22 +480,22 @@ class Win32Config(PlatformConfig):
 
     def _parse_info(self, cfg_info):
         super(Win32Config, self)._parse_info(cfg_info)
-        if cfg_info.has_key(Win32Config.KEY_SLN_FILE):
+        if Win32Config.KEY_SLN_FILE in cfg_info:
             self.sln_file = cfg_info[Win32Config.KEY_SLN_FILE]
         else:
             self.sln_file = None
 
-        if cfg_info.has_key(Win32Config.KEY_PROJECT_NAME):
+        if Win32Config.KEY_PROJECT_NAME in cfg_info:
             self.project_name = cfg_info[Win32Config.KEY_PROJECT_NAME]
         else:
             self.project_name = None
 
-        if cfg_info.has_key(Win32Config.KEY_BUILD_CFG_PATH):
+        if Win32Config.KEY_BUILD_CFG_PATH in cfg_info:
             self.build_cfg_path = cfg_info[Win32Config.KEY_BUILD_CFG_PATH]
         else:
             self.build_cfg_path = None
 
-        if cfg_info.has_key(Win32Config.KEY_EXE_OUT_DIR):
+        if Win32Config.KEY_EXE_OUT_DIR in cfg_info:
             self.exe_out_dir = cfg_info[Win32Config.KEY_EXE_OUT_DIR]
         else:
             self.exe_out_dir = None
@@ -524,22 +524,22 @@ class LinuxConfig(PlatformConfig):
 
     def _parse_info(self, cfg_info):
         super(LinuxConfig, self)._parse_info(cfg_info)
-        if cfg_info.has_key(LinuxConfig.KEY_CMAKE_PATH):
+        if LinuxConfig.KEY_CMAKE_PATH in cfg_info:
             self.cmake_path = cfg_info[LinuxConfig.KEY_CMAKE_PATH]
         else:
             self.cmake_path = None
 
-        if cfg_info.has_key(LinuxConfig.KEY_BUILD_DIR):
+        if LinuxConfig.KEY_BUILD_DIR in cfg_info:
             self.build_dir = cfg_info[LinuxConfig.KEY_BUILD_DIR]
         else:
             self.build_dir = None
 
-        if cfg_info.has_key(LinuxConfig.KEY_PROJECT_NAME):
+        if LinuxConfig.KEY_PROJECT_NAME in cfg_info:
             self.project_name = cfg_info[LinuxConfig.KEY_PROJECT_NAME]
         else:
             self.project_name = None
 
-        if cfg_info.has_key(LinuxConfig.KEY_BUILD_RESULT_DIR):
+        if LinuxConfig.KEY_BUILD_RESULT_DIR in cfg_info:
             self.build_result_dir = cfg_info[LinuxConfig.KEY_BUILD_RESULT_DIR]
         else:
             self.build_result_dir = None
@@ -562,17 +562,17 @@ class WebConfig(PlatformConfig):
 
     def _parse_info(self, cfg_info):
         super(WebConfig, self)._parse_info(cfg_info)
-        if cfg_info.has_key(WebConfig.KEY_SUB_URL):
+        if WebConfig.KEY_SUB_URL in cfg_info:
             self.sub_url = cfg_info[WebConfig.KEY_SUB_URL]
         else:
             self.sub_url = None
 
-        if cfg_info.has_key(WebConfig.KEY_RUN_ROOT_DIR):
+        if WebConfig.KEY_RUN_ROOT_DIR in cfg_info:
             self.run_root_dir = os.path.join(self._proj_root_path, cfg_info[WebConfig.KEY_RUN_ROOT_DIR])
         else:
             self.run_root_dir = None
 
-        if cfg_info.has_key(WebConfig.KEY_COPY_RESOURCES):
+        if WebConfig.KEY_COPY_RESOURCES in cfg_info:
             self.copy_res = cfg_info[WebConfig.KEY_COPY_RESOURCES]
         else:
             self.copy_res = None
@@ -598,12 +598,12 @@ class MetroConfig(PlatformConfig):
 
     def _parse_info(self, cfg_info):
         super(MetroConfig, self)._parse_info(cfg_info)
-        if cfg_info.has_key(Win32Config.KEY_SLN_FILE):
+        if Win32Config.KEY_SLN_FILE in cfg_info:
             self.sln_file = cfg_info[Win32Config.KEY_SLN_FILE]
         else:
             self.sln_file = None
 
-        if cfg_info.has_key(Win32Config.KEY_PROJECT_NAME):
+        if Win32Config.KEY_PROJECT_NAME in cfg_info:
             self.project_name = cfg_info[Win32Config.KEY_PROJECT_NAME]
         else:
             self.project_name = None

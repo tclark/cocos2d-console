@@ -13,8 +13,8 @@ Statistics the user behaviors of cocos2d-console by google analytics
 import cocos
 import uuid
 import locale
-import httplib
-import urllib
+import http.client
+import urllib.request, urllib.parse, urllib.error
 import platform
 import sys
 import os
@@ -423,7 +423,7 @@ def get_params_str(event, event_value, is_ga=True, multi_events=False, engine_ve
         params[Fields.EVENT_ACTION]   = event[1]
         params[Fields.EVENT_LABEL]    = event[2]
         params[Fields.EVENT_VALUE]    = '%d' % event_value
-        params_str = urllib.urlencode(params)
+        params_str = urllib.parse.urlencode(params)
     else:
         params = get_bi_params(event, event_value, multi_events, engine_version)
         strParam = json.dumps(params)
@@ -445,7 +445,7 @@ def do_http_request(event, event_value, is_ga=True, multi_events=False, engine_v
 
         socket.setdefaulttimeout(TIMEOUT_VALUE)
 
-        conn = httplib.HTTPConnection(host_url, timeout=TIMEOUT_VALUE)
+        conn = http.client.HTTPConnection(host_url, timeout=TIMEOUT_VALUE)
         conn.request(method="POST", url=host_path, body=params_str)
 
         response = conn.getresponse()

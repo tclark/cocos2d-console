@@ -34,7 +34,7 @@ class MultiLanguage:
         info = cls.get_instance().cfg_info
         ret = []
         if info is not None:
-            for key in info.keys():
+            for key in list(info.keys()):
                 if isinstance(key, str):
                     ret.append(key)
 

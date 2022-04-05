@@ -7,7 +7,7 @@
 
 import os
 import sys
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from tarfile import TarFile
 import shutil
 
@@ -27,9 +27,9 @@ class Logging:
     @staticmethod
     def _print(s, color=None):
         if color and sys.stdout.isatty() and sys.platform != 'win32':
-            print color + s + Logging.RESET
+            print(color + s + Logging.RESET)
         else:
-            print s
+            print(s)
 
     @staticmethod
     def debug(s):
@@ -68,7 +68,7 @@ delete the directory "%s" before running the installer again.
 """ % console_path)
 
 Logging.info("Downloading...")
-download_path, _ = urllib.urlretrieve('https://github.com/cocos2d/cocos2d-console/tarball/master')
+download_path, _ = urllib.request.urlretrieve('https://github.com/cocos2d/cocos2d-console/tarball/master')
 
 Logging.info("Installing...")
 with TarFile.open(download_path) as tar:
