@@ -44,7 +44,7 @@ class CCPluginNew(cocos.CCPlugin):
 
     def init(self, args):
         self._projname = args.name
-        self._projdir = unicode(
+        self._projdir = str(
             os.path.abspath(os.path.join(args.directory, self._projname)), "utf-8")
         self._lang = args.language
         self._package = args.package
@@ -57,14 +57,14 @@ class CCPluginNew(cocos.CCPlugin):
         # search for custom paths
         if args.engine_path is not None:
             self._cocosroot = os.path.abspath(args.engine_path)
-            self._cocosroot = unicode(self._cocosroot, "utf-8")
+            self._cocosroot = str(self._cocosroot, "utf-8")
             tp_path = os.path.join(self._cocosroot, "templates")
             if os.path.isdir(tp_path):
                 self._templates_paths.append(tp_path)
 
         # remove duplicates keeping order
         o = OrderedDict.fromkeys(self._templates_paths)
-        self._templates_paths = o.keys()
+        self._templates_paths = list(o.keys())
 
         self._other_opts = args
         self._mac_bundleid = args.mac_bundleid
@@ -85,7 +85,7 @@ class CCPluginNew(cocos.CCPlugin):
             else:
                 raise cocos.CCPluginError(
                     "Template name '%s' not found. Available templates: %s" %
-                    (template_key, dic.keys()),
+                    (template_key, list(dic.keys())),
                     cocos.CCPluginError.ERROR_PATH_NOT_FOUND)
         else:
             # Old way
@@ -248,7 +248,7 @@ class CCPluginNew(cocos.CCPlugin):
             data[cocos_project.Project.KEY_HAS_NATIVE] = True
 
         # record the engine version if not predefined
-        if not data.has_key(cocos_project.Project.KEY_ENGINE_VERSION):
+        if cocos_project.Project.KEY_ENGINE_VERSION not in data:
             engine_version = utils.get_engine_version(self._cocosroot)
             if engine_version is not None:
                 data[cocos_project.Project.KEY_ENGINE_VERSION] = engine_version
@@ -358,7 +358,7 @@ class Templates(object):
                     continue
 
                 template_name = match.group(1)
-                if template_name in self._template_folders.keys():
+                if template_name in list(self._template_folders.keys()):
                     continue
 
                 self._template_folders[template_name] = os.path.join(templates_dir, name)
@@ -381,12 +381,12 @@ class Templates(object):
     def select_one(self):
         cocos.Logging.warning(MultiLanguage.get_string('NEW_SELECT_TEMPLATE_TIP1'))
 
-        p = self._template_folders.keys()
+        p = list(self._template_folders.keys())
         for i in range(len(p)):
             cocos.Logging.warning('%d %s' % (i + 1, p[i]))
         cocos.Logging.warning(MultiLanguage.get_string('NEW_SELECT_TEMPLATE_TIP2'))
         while True:
-            option = raw_input()
+            option = input()
             if option.isdigit():
                 option = int(option) - 1
                 if option in range(len(p)):
@@ -473,7 +473,7 @@ class TPCreator(object):
         self.do_cmds(cmds)
 
     def do_cmds(self, cmds):
-        for k, v in cmds.iteritems():
+        for k, v in cmds.items():
             # call cmd method by method/cmd name
             # get from
             # http://stackoverflow.com/questions/3951840/python-how-to-invoke-an-function-on-an-object-dynamically-by-name
@@ -506,7 +506,7 @@ class TPCreator(object):
 
         # must copy moduleConfig.json & CCBoot.js
         file_list = [moduleConfig, data['bootFile']]
-        for k, v in modules.iteritems():
+        for k, v in modules.items():
             module = modules[k]
             for f in module:
                 if f[-2:] == 'js':
@@ -561,7 +561,7 @@ class TPCreator(object):
         if self.lang == 'lua':
             fileList = fileList + data['lua']
 
-        if self.lang == 'js' and 'js' in data.keys():
+        if self.lang == 'js' and 'js' in list(data.keys()):
             fileList = fileList + data['js']
 
         # begin copy engine

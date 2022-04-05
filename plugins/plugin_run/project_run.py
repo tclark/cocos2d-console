@@ -16,7 +16,7 @@ import sys
 import os
 import cocos
 from MultiLanguage import MultiLanguage
-import BaseHTTPServer
+import http.server
 import webbrowser
 import threading
 import subprocess
@@ -136,7 +136,7 @@ class CCPluginRun(cocos.CCPlugin):
         if ret is None:
             raise cocos.CCPluginError('Get simulator failed!')
 
-        print('Using simulator: %s' % retName)
+        print(('Using simulator: %s' % retName))
         return ret
 
     def _get_bundle_id(self, app_path):
@@ -146,7 +146,7 @@ class CCPluginRun(cocos.CCPlugin):
         if errCode == 0:
             import json
             jsonObj = json.loads(out)
-            if jsonObj is not None and jsonObj.has_key('CFBundleIdentifier'):
+            if jsonObj is not None and 'CFBundleIdentifier' in jsonObj:
                 ret = jsonObj['CFBundleIdentifier']
 
         if ret is None:
@@ -252,9 +252,9 @@ class CCPluginRun(cocos.CCPlugin):
         if not self._platforms.is_web_active():
             return
 
-        from SimpleHTTPServer import SimpleHTTPRequestHandler
+        from http.server import SimpleHTTPRequestHandler
         HandlerClass = SimpleHTTPRequestHandler
-        ServerClass  = BaseHTTPServer.HTTPServer
+        ServerClass  = http.server.HTTPServer
         Protocol     = "HTTP/1.0"
         HandlerClass.protocol_version = Protocol
 

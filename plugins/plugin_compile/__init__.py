@@ -1,1 +1,1 @@
-from project_compile import CCPluginCompile
+from .project_compile import CCPluginCompile

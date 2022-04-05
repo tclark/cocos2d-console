@@ -5,7 +5,7 @@ import os
 import sys
 import json
 import utils
-import modify_template
+from . import modify_template
 import re
 import cocos
 
@@ -189,7 +189,7 @@ class TemplateGenerator(cocos.CCPlugin):
                 file_path = os.path.abspath(os.path.join(self.engine_template_dir, file_path))
 
             if not os.path.isfile(file_path):
-                print("%s is not a file." % file_path)
+                print(("%s is not a file." % file_path))
                 continue
 
             pattern = cfg["pattern"]
@@ -292,12 +292,12 @@ class TemplateGenerator(cocos.CCPlugin):
             cfg_full_path = os.path.join(self.engine_template_dir, build_cfg_file)
             file_cfg_info = build_cfg_files[build_cfg_file]
 
-            if file_cfg_info.has_key(TemplateGenerator.KEY_RM_COPY_RES):
+            if TemplateGenerator.KEY_RM_COPY_RES in file_cfg_info:
                 rm_copy_cfg = file_cfg_info[TemplateGenerator.KEY_RM_COPY_RES]
                 for keyword in rm_copy_cfg:
                     self.rm_copy_res(cfg_full_path, keyword)
 
-            if file_cfg_info.has_key(TemplateGenerator.KEY_REPLACE_STRING):
+            if TemplateGenerator.KEY_REPLACE_STRING in file_cfg_info:
                 replace_cfg = file_cfg_info[TemplateGenerator.KEY_REPLACE_STRING]
                 f = open(cfg_full_path)
                 file_content = f.read()

@@ -43,7 +43,7 @@ class CCPluginVersion(cocos2d.CCPlugin):
     		data = f.read()
     		match = re.search('cocos2dVersion\(\)\s*{\s*return\s+"([^"]+)"\s*;', data)
     		if match:
-    			print 'cocos2d %s' % match.group(1)
+    			print('cocos2d %s' % match.group(1))
     		else:
     			raise cocos2d.CCPluginError("Couldn't find version info")
 

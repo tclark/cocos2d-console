@@ -2,15 +2,15 @@
 import os
 import os.path
 import json
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import re
 
 import cocos
 from MultiLanguage import MultiLanguage
 
-from functions import *
-from local_package_database import LocalPackagesDatabase
-from zip_downloader import ZipDownloader
+from .functions import *
+from .local_package_database import LocalPackagesDatabase
+from .zip_downloader import ZipDownloader
 
 def convert_version_part(version_part):
     tag = '(\d+)(\D*.*)'
@@ -43,14 +43,14 @@ def compare_version(version1, version2):
 
     if n1 > n2:
         n = n1
-        for x in xrange(n2,n):
+        for x in range(n2,n):
             v2.append("0")
     else:
         n = n2
-        for x in xrange(n1,n):
+        for x in range(n1,n):
             v1.append("0")
 
-    for x in xrange(0,n):
+    for x in range(0,n):
         ver_num1, ver_str1 = convert_version_part(v1[x])
         ver_num2, ver_str2 = convert_version_part(v2[x])
         if ver_num1 > ver_num2:
@@ -113,7 +113,7 @@ class PackageHelper:
     def search_keyword(cls, keyword):
         url = cls.QUERY_KEYWORD_URL % keyword
         # print "[PACKAGE] query url: %s" % url
-        response = urllib2.urlopen(url)
+        response = urllib.request.urlopen(url)
         html = response.read()
         packages_data = json.loads(html)
         if packages_data is None or len(packages_data) == 0:
@@ -130,7 +130,7 @@ class PackageHelper:
     def query_package_data(cls, name, version = 'all'):
         url = cls.QUERY_PACKAGE_URL % name + '&version=' + version
         # print "[PACKAGE] query url: %s" % url
-        response = urllib2.urlopen(url)
+        response = urllib.request.urlopen(url)
         html = response.read()
         package_data = json.loads(html)
         # d1 = json.dumps(package_data,indent=4)
@@ -149,7 +149,7 @@ class PackageHelper:
     def download_package_zip(cls, package_data, force):
         download_url = cls.REPO_URL + cls.REPO_PACKAGES_DIR + "/" + package_data["filename"]
         workdir = cls.get_package_path(package_data)
-        print MultiLanguage.get_string('PACKAGE_WORKDIR_FMT', workdir)
+        print(MultiLanguage.get_string('PACKAGE_WORKDIR_FMT', workdir))
         downloader = ZipDownloader(download_url, workdir, package_data, force)
         downloader.run()
 
@@ -167,7 +167,7 @@ class PackageHelper:
     def get_installed_package_data(cls, package_name, version = None):
         localdb = LocalPackagesDatabase(cls.get_local_database_path())
         packages = localdb.get_packages()
-        keys = packages.keys()
+        keys = list(packages.keys())
         keys.sort()
         keys.reverse()
         for key in keys:
@@ -182,7 +182,7 @@ class PackageHelper:
     def get_installed_package_newest_version(cls, package_name, engine = None):
         localdb = LocalPackagesDatabase(cls.get_local_database_path())
         packages = localdb.get_packages()
-        keys = packages.keys()
+        keys = list(packages.keys())
         keys.sort()
         keys.reverse()
         package_list = []
@@ -201,7 +201,7 @@ class PackageHelper:
                 return
 
         package_newest = package_list[0]
-        for x in xrange(1,n-1):
+        for x in range(1,n-1):
             package_newest = get_newer_package(package_list[x], package_newest)
 
         return package_newest

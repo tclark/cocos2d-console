@@ -152,7 +152,7 @@ class VCXProject(object):
         cfg_nodes = self.root_node.getElementsByTagName("ItemDefinitionGroup")
         for cfg_node in cfg_nodes:
             if config is not None:
-                if 'Condition' not in cfg_node.attributes.keys():
+                if 'Condition' not in list(cfg_node.attributes.keys()):
                     continue
 
                 cond_attr = cfg_node.attributes["Condition"].value
@@ -225,7 +225,7 @@ class VCXProject(object):
         cfg_nodes = self.root_node.getElementsByTagName("ItemDefinitionGroup")
         for cfg_node in cfg_nodes:
             if config is not None:
-                if 'Condition' not in cfg_node.attributes.keys():
+                if 'Condition' not in list(cfg_node.attributes.keys()):
                     continue
 
                 cond_attr = cfg_node.attributes["Condition"].value

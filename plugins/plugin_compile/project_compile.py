@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # ----------------------------------------------------------------------------
 # cocos2d "compile" plugin
 #
@@ -21,7 +21,7 @@ import re
 import sys
 import shutil
 import json
-import build_web
+from . import build_web
 import utils
 
 class CCPluginCompile(cocos.CCPlugin):
@@ -211,7 +211,7 @@ class CCPluginCompile(cocos.CCPlugin):
         try:
             return multiprocessing.cpu_count()
         except Exception:
-            print MultiLanguage.get_string('COMPILE_DETECT_CPU_FAILED')
+            print((MultiLanguage.get_string('COMPILE_DETECT_CPU_FAILED')))
             return 1
 
     def _get_output_dir(self):
@@ -267,7 +267,7 @@ class CCPluginCompile(cocos.CCPlugin):
         key_of_copy = None
         key_of_must_copy = None
         if self._platforms.is_android_active():
-            from build_android import AndroidBuilder
+            from .build_android import AndroidBuilder
             key_of_copy = AndroidBuilder.CFG_KEY_COPY_TO_ASSETS
             key_of_must_copy = AndroidBuilder.CFG_KEY_MUST_COPY_TO_ASSERTS
         elif self._platforms.is_win32_active():
@@ -285,7 +285,7 @@ class CCPluginCompile(cocos.CCPlugin):
             open_file = None
             changed = False
             if key_of_copy is not None:
-                if cfg_info.has_key(key_of_copy):
+                if key_of_copy in cfg_info:
                     src_list = cfg_info[key_of_copy]
                     ret_list = self._convert_cfg_list(src_list, build_cfg_dir)
                     cfg_info[CCPluginCompile.CFG_KEY_COPY_RESOURCES] = ret_list
@@ -293,7 +293,7 @@ class CCPluginCompile(cocos.CCPlugin):
                     changed = True
 
             if key_of_must_copy is not None:
-                if cfg_info.has_key(key_of_must_copy):
+                if key_of_must_copy in cfg_info:
                     src_list = cfg_info[key_of_must_copy]
                     ret_list = self._convert_cfg_list(src_list, build_cfg_dir)
                     cfg_info[CCPluginCompile.CFG_KEY_MUST_COPY_RESOURCES] = ret_list
@@ -472,7 +472,7 @@ class CCPluginCompile(cocos.CCPlugin):
             gradle_support_ndk = True
             
 
-        from build_android import AndroidBuilder
+        from .build_android import AndroidBuilder
         builder = AndroidBuilder(self._verbose, project_android_dir,
                                  self._no_res, self._project, self._mode, self._build_type,
                                  self.app_abi, gradle_support_ndk)
@@ -586,7 +586,7 @@ class CCPluginCompile(cocos.CCPlugin):
             open_file = open(cfg_file)
             cfg_info = json.load(open_file)
             open_file.close()
-            if cfg_info.has_key("remove_res"):
+            if "remove_res" in cfg_info:
                 remove_list = cfg_info["remove_res"]
                 for f in remove_list:
                     res = os.path.join(target_path, f)
@@ -821,8 +821,8 @@ class CCPluginCompile(cocos.CCPlugin):
                     self._run_cmd(ipa_cmd)
 
             cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_BUILD_SUCCEED'))
-        except Exception, e:
-            print str(e)
+        except Exception as e:
+            print((str(e)))
             raise cocos.CCPluginError(MultiLanguage.get_string('COMPILE_ERROR_BUILD_FAILED'),
                                       cocos.CCPluginError.ERROR_BUILD_FAILED)
         finally:
@@ -1492,7 +1492,7 @@ class CCPluginCompile(cocos.CCPlugin):
     def _copy_resources(self, dst_path):
         data = self._get_build_cfg()
 
-        if data.has_key(CCPluginCompile.CFG_KEY_MUST_COPY_RESOURCES):
+        if CCPluginCompile.CFG_KEY_MUST_COPY_RESOURCES in data:
             if self._no_res:
                 fileList = data[CCPluginCompile.CFG_KEY_MUST_COPY_RESOURCES]
             else:

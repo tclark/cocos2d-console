@@ -6,8 +6,8 @@
 '''
 "gui" plugin for cocos2d command line tool
 '''
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
 
 __docformat__ = 'restructuredtext'
 

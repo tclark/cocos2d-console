@@ -2,7 +2,7 @@
 import cocos
 from MultiLanguage import MultiLanguage
 
-from helper import PackageHelper
+from .helper import PackageHelper
 
 class PackageInstall(cocos.CCPlugin):
     @staticmethod
@@ -42,7 +42,7 @@ class PackageInstall(cocos.CCPlugin):
                 self.download(force, data)
                 return
 
-        if package_data.has_key('err'):
+        if 'err' in package_data:
             message = MultiLanguage.get_string('PACKAGE_INSTALL_ERROR_NO_PKG_FMT', (name, version))
             raise cocos.CCPluginError(message, cocos.CCPluginError.ERROR_WRONG_CONFIG)
             
@@ -52,4 +52,4 @@ class PackageInstall(cocos.CCPlugin):
         PackageHelper.download_package_zip(package_data, force)
         PackageHelper.add_package(package_data)
 
-        print ""
+        print("")

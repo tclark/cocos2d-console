@@ -1,7 +1,7 @@
 
 import time
 
-from helper import PackageHelper
+from .helper import PackageHelper
 
 import cocos
 from MultiLanguage import MultiLanguage
@@ -30,7 +30,7 @@ class PackageInfo(object):
         version = args.version
         package_data = PackageHelper.query_package_data(name, version)
         if package_data is None:
-            print MultiLanguage.get_string('PACKAGE_INFO_ERROR_NO_PKG_FMT', (name, version))
+            print(MultiLanguage.get_string('PACKAGE_INFO_ERROR_NO_PKG_FMT', (name, version)))
             return
 
         if isinstance(package_data, list):
@@ -38,15 +38,15 @@ class PackageInfo(object):
                 self.show_info(name, data)
                 return
 
-        if package_data.has_key('err'):
-            print MultiLanguage.get_string('PACKAGE_INFO_ERROR_NO_PKG_FMT', (name, version))
+        if 'err' in package_data:
+            print(MultiLanguage.get_string('PACKAGE_INFO_ERROR_NO_PKG_FMT', (name, version)))
             return
             
         self.show_info(name, package_data)
 
     def show_info(self, name, package_data):
-        print MultiLanguage.get_string('PACKAGE_INFO_PKG_FMT',
+        print(MultiLanguage.get_string('PACKAGE_INFO_PKG_FMT',
               (name, package_data["name"], package_data["version"],
                time.strftime("%Y-%m-%d %H:%I:%S", time.gmtime(int(package_data["filetime"]))),
                package_data["author"], (int(package_data["filesize"]) / 1024),
-               package_data["description"]))
+               package_data["description"])))

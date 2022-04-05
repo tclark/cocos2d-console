@@ -1,2 +1,2 @@
 
-from plugin_package import CCPluginPackage
+from .plugin_package import CCPluginPackage

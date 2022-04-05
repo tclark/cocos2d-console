@@ -6,7 +6,7 @@ import sys
 import shutil
 import json
 import utils
-import gen_prebuilt_mk
+from . import gen_prebuilt_mk
 
 import cocos
 from MultiLanguage import MultiLanguage
@@ -154,7 +154,7 @@ class LibsCompiler(cocos.CCPlugin):
                                 CCPluginError.ERROR_PARSE_FILE)
 
         for k in LibsCompiler.CHECK_KEYS:
-            if k not in self.cfg_info.keys():
+            if k not in list(self.cfg_info.keys()):
                 raise CCPluginError(MultiLanguage.get_string('GEN_LIBS_ERROR_KEY_NOT_FOUND_FMT', (k, self.cfg_file_path)),
                                     CCPluginError.ERROR_WRONG_CONFIG)
 
@@ -223,7 +223,7 @@ class LibsCompiler(cocos.CCPlugin):
         win32_proj_info = self.cfg_info[LibsCompiler.KEY_VS_PROJS_INFO]
         proj_path = win32_proj_info['proj_path']
         for vs_version in compile_vs_versions:
-            if not vs_version in vs_cmd_info.keys():
+            if not vs_version in list(vs_cmd_info.keys()):
                 continue
 
             try:

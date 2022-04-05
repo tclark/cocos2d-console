@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # ----------------------------------------------------------------------------
 # cocos "luacompile" plugin
 #
@@ -60,7 +60,7 @@ def encrypt(str, key):
     while q > 0:  
         sum = (sum + _DELTA) & 0xffffffff  
         e = sum >> 2 & 3  
-        for p in xrange(n):  
+        for p in range(n):  
             y = v[p + 1]  
             v[p] = (v[p] + ((z >> 5 ^ y << 2) + (y >> 3 ^ z << 4) ^ (sum ^ y) + (k[p & 3 ^ e] ^ z))) & 0xffffffff  
             z = v[p]  
@@ -81,7 +81,7 @@ def decrypt(str, key):
     sum = (q * _DELTA) & 0xffffffff  
     while (sum != 0):  
         e = sum >> 2 & 3  
-        for p in xrange(n, 0, -1):  
+        for p in range(n, 0, -1):  
             z = v[p - 1]  
             v[p] = (v[p] - ((z >> 5 ^ y << 2) + (y >> 3 ^ z << 4) ^ (sum ^ y) + (k[p & 3 ^ e] ^ z))) & 0xffffffff  
             y = v[p]  
@@ -190,7 +190,7 @@ class CCPluginLuaCompile(cocos.CCPlugin):
         elif cocos.os_is_linux():
             ret = os.path.join(self._workingdir, "bin", bit_prefix, "luajit-linux")
 
-        print("luajit bin path: " + ret)
+        print(("luajit bin path: " + ret))
         return ret
 
     def compile_lua(self, lua_file, output_file):

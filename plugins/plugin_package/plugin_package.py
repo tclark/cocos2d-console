@@ -64,4 +64,4 @@ class CCPluginPackage(cocos.CCPlugin):
         return os.path.join(path, 'cocospackage')
 
     def print_help(self):
-            print(MultiLanguage.get_string('PACKAGE_HELP'))
+            print((MultiLanguage.get_string('PACKAGE_HELP')))

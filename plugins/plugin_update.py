@@ -14,7 +14,7 @@ __docformat__ = 'restructuredtext'
 import re
 import os
 import cocos2d
-import httplib
+import http.client
 
 
 class CCPluginUpdate(cocos2d.CCPlugin):
@@ -37,11 +37,11 @@ class CCPluginUpdate(cocos2d.CCPlugin):
     def _get_latest_version(self):
         cocos2d.Logging.info("obtaining latest version number")
 
-        conn = httplib.HTTPConnection('cocos2d-x.org', timeout=10)
+        conn = http.client.HTTPConnection('cocos2d-x.org', timeout=10)
         try:
             conn.request('GET', '/download')
             res = conn.getresponse()
-            if res.status != httplib.OK:
+            if res.status != http.client.OK:
                 raise cocos2d.CCPluginError("Unexpected response status (%d)" % res.status)
             data = res.read()
 

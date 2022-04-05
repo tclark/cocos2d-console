@@ -9,7 +9,7 @@ import shutil
 import cocos
 from MultiLanguage import MultiLanguage
 
-from functions import *
+from .functions import *
 
 class AddFrameworkHelper(object):
     IOS_MAC_PROJECT_FILE_REF_BEGIN_TAG = '/\* Begin PBXFileReference section \*/'
@@ -221,7 +221,7 @@ class AddFrameworkHelper(object):
                         self.append_uninstall_info({'bak_file':bak, 'ori_file':dst})
                         self.save_uninstall_info()
                     else:
-                        print MultiLanguage.get_string('PACKAGE_UNABLE_COPY_FMT', dst)
+                        print(MultiLanguage.get_string('PACKAGE_UNABLE_COPY_FMT', dst))
                         continue
                 else:
                     if os.path.isdir(dst):
@@ -913,7 +913,7 @@ class AddFrameworkHelper(object):
 
     def load_proj_ios_mac(self, notSplitLines = False):
         if not "proj.ios_mac" in self._project:
-            print MultiLanguage.get_string('PACKAGE_MAC_NOT_FOUND')
+            print(MultiLanguage.get_string('PACKAGE_MAC_NOT_FOUND'))
             return
 
         workdir = self._project["proj.ios_mac"]
@@ -924,7 +924,7 @@ class AddFrameworkHelper(object):
                 break
 
         if proj_dir is None:
-            print MultiLanguage.get_string('PACKAGE_XCODE_PROJ_NOT_FOUND')
+            print(MultiLanguage.get_string('PACKAGE_XCODE_PROJ_NOT_FOUND'))
             return
 
         if not os.path.isdir(workdir + os.sep + proj_dir):
@@ -943,7 +943,7 @@ class AddFrameworkHelper(object):
 
     def load_sln_win32(self, notSplitLines = False):
         if not "proj.win32" in self._project:
-            print MultiLanguage.get_string('PACKAGE_ERROR_WIN32_NOT_FOUND')
+            print(MultiLanguage.get_string('PACKAGE_ERROR_WIN32_NOT_FOUND'))
             return
 
         workdir = self._project["proj.win32"]
@@ -954,7 +954,7 @@ class AddFrameworkHelper(object):
                 break
 
         if proj_file_path is None:
-            print MultiLanguage.get_string('PACKAGE_ERROR_NO_SLN_IN_WIN32')
+            print(MultiLanguage.get_string('PACKAGE_ERROR_NO_SLN_IN_WIN32'))
             return
 
         f = open(proj_file_path, "rb")
@@ -968,7 +968,7 @@ class AddFrameworkHelper(object):
 
     def load_proj_win32(self, notSplitLines = False):
         if not "proj.win32" in self._project:
-            print MultiLanguage.get_string('PACKAGE_ERROR_WIN32_NOT_FOUND')
+            print(MultiLanguage.get_string('PACKAGE_ERROR_WIN32_NOT_FOUND'))
             return
 
         workdir = self._project["proj.win32"]
@@ -979,7 +979,7 @@ class AddFrameworkHelper(object):
                 break
 
         if proj_file_path is None:
-            print MultiLanguage.get_string('PACKAGE_VS_PROJ_NOT_FOUND')
+            print(MultiLanguage.get_string('PACKAGE_VS_PROJ_NOT_FOUND'))
             return
 
         f = open(proj_file_path, "rb")
@@ -993,13 +993,13 @@ class AddFrameworkHelper(object):
 
     def load_proj_android(self, notSplitLines = False):
         if not "proj.android" in self._project:
-            print MultiLanguage.get_string('PACKAGE_ANDROID_PROJ_NOT_FOUND')
+            print(MultiLanguage.get_string('PACKAGE_ANDROID_PROJ_NOT_FOUND'))
             return
 
         workdir = self._project["proj.android"] + os.sep + "jni"
         proj_file_path = workdir + os.sep + "Android.mk"
         if not os.path.isfile(proj_file_path):
-            print MultiLanguage.get_string('PACKAGE_ANDROID_MK_NOT_FOUND')
+            print(MultiLanguage.get_string('PACKAGE_ANDROID_MK_NOT_FOUND'))
             return
 
         f = open(proj_file_path, "rb")
@@ -1014,7 +1014,7 @@ class AddFrameworkHelper(object):
     def load_appdelegate_file(self):
         file_path = self._project["classes_dir"] + os.sep + "AppDelegate.cpp"
         if not os.path.isfile(file_path):
-            print MultiLanguage.get_string('PACKAGE_APPDELEGATE_NOT_FOUND')
+            print(MultiLanguage.get_string('PACKAGE_APPDELEGATE_NOT_FOUND'))
             return
 
         f = open(file_path, "rb")
@@ -1026,7 +1026,7 @@ class AddFrameworkHelper(object):
     def get_build_cfg_json_path(self):
         file_path = self._project["proj.android"] + os.sep + "build-cfg.json"
         if not os.path.isfile(file_path):
-            print MultiLanguage.get_string('PACKAGE_BUILD_CFG_NOT_FOUND')
+            print(MultiLanguage.get_string('PACKAGE_BUILD_CFG_NOT_FOUND'))
             return
 
         return file_path

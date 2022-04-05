@@ -62,7 +62,7 @@ class CreateFrameworkHelper(object):
         f = open(dst, "wb")
         f.write(text)
         f.close()
-        print MultiLanguage.get_string('PACKAGE_CREATE_OK_FMT', dst)
+        print(MultiLanguage.get_string('PACKAGE_CREATE_OK_FMT', dst))
 
     def get_format_string(self, src_str):
         vars = self._vars
