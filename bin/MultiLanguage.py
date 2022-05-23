@@ -93,9 +93,8 @@ class MultiLanguage:
 
         # get the strings info
         if os.path.isfile(cfg_file_path):
-            f = open(cfg_file_path)
-            self.cfg_info = json.load(f)
-            f.close()
+            with open(cfg_file_path, encoding='utf-8') as fh:
+                self.cfg_info = json.load(fh)
 
             self.cur_lang_strings = self.cfg_info.get(cur_lang_key)
 
