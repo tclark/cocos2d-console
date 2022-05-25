@@ -29,6 +29,7 @@ from MultiLanguage import MultiLanguage
 
 import struct 
 
+_XXTEA_FILL_CHAR = '\0'
 _DELTA = 0x9E3779B9  
 
 def _long2str(v, w):  
@@ -41,17 +42,34 @@ def _long2str(v, w):
     return s[0:n] if w else s  
   
 def _str2long(s, w):  
+    # if it's loaded as a string, convert it to a bytestring
+    if (type(s) == str):
+        s = s.encode("utf-8")
+
     n = len(s)  
     m = (4 - (n & 3) & 3) + n  
-    s = s.ljust(m, "\0")  
+    padding = m - n
+
+    if (padding > 0):
+        s += b'\0'*padding
+
     v = list(struct.unpack('<%iL' % (m >> 2), s))  
     if w: v.append(n)  
     return v  
+
+def _str2long_old(s, w):  
+    n = len(s)  
+    m = (4 - (n & 3) & 3) + n  
+    s = s.ljust(m, '\0')  
+    v = list(struct.unpack('<%iL' % (m >> 2), s))  
+    if w: v.append(n)  
+    return v  
+
   
 def encrypt(str, key):  
     if str == '': return str  
     v = _str2long(str, True)  
-    k = _str2long(key.ljust(16, "\0"), False)  
+    k = _str2long(key.ljust(16, _XXTEA_FILL_CHAR), False)  
     n = len(v) - 1  
     z = v[n]  
     y = v[0]  
@@ -73,7 +91,7 @@ def encrypt(str, key):
 def decrypt(str, key):  
     if str == '': return str  
     v = _str2long(str, False)  
-    k = _str2long(key.ljust(16, "\0"), False)  
+    k = _str2long(key.ljust(16, _XXTEA_FILL_CHAR), False)  
     n = len(v) - 1  
     z = v[n]  
     y = v[0]  
@@ -123,7 +141,7 @@ class CCPluginLuaCompile(cocos.CCPlugin):
         self._lua_files = {}
         self._isEncrypt = options.encrypt
         self._encryptkey = options.encryptkey
-        self._encryptsign = options.encryptsign
+        self._encryptsign = options.encryptsign.encode("utf-8")
         self._bytecode_64bit = options.bytecode_64bit
 
         self._luajit_exe_path = self.get_luajit_path()
